@@ -35,6 +35,7 @@ def check_chroma_exists(id: str) -> bool:
         return False
 
 def extract_images_from_mp4(id: str, file_path: str) -> None:
+    step = configs.STEP_FRAME
     if file_path.endswith('mp4'):
         filename = os.path.basename(file_path).split('.mp4')[0]
         vidcap = cv.VideoCapture(file_path)
@@ -51,8 +52,8 @@ def extract_images_from_mp4(id: str, file_path: str) -> None:
         while success:
             frame_id = int(round(vidcap.get(1))) # get current frame
             success, image = vidcap.read()
-            if frame_id % int(fps) == 0 and frame_id != 0:
-                cv.imwrite(os.path.join(saved_path, filename + "_frame%d.jpg") % frame_id/int(fps), image)
+            if frame_id % (step*int(fps)) == 0 and frame_id != 0:
+                cv.imwrite(os.path.join(saved_path, filename + "_frame%d.jpg") % (frame_id/(step*int(fps))), image)
         vidcap.release()
         logging.info("Extract images from video complete")
     else:
